@@ -1,0 +1,154 @@
+---
+// Header.astro — Global navigation component
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-xl"
+  id="site-header"
+>
+  <div class="mx-auto max-w-7xl px-6 py-4">
+    <nav class="flex items-center justify-between" aria-label="Main navigation">
+      <!-- Logo -->
+      <a href="/" id="nav-logo" class="group flex items-center gap-2">
+        <span
+          class="text-lg font-black tracking-widest text-white transition-colors duration-300 group-hover:text-[#bfff00]"
+          style="font-family: 'Space Grotesk', sans-serif;"
+        >
+          AHMAD FAQIH
+        </span>
+        <span class="h-1.5 w-1.5 rounded-full bg-[#bfff00]"></span>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <ul class="hidden items-center gap-8 md:flex" role="list">
+        <li>
+          <a
+            href="/"
+            class="relative text-sm font-medium text-white/60 transition-colors duration-300 hover:text-white after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-[#bfff00] after:transition-all after:duration-300 hover:after:w-full"
+            >Home</a
+          >
+        </li>
+        <li>
+          <a
+            href="/#about"
+            class="relative text-sm font-medium text-white/60 transition-colors duration-300 hover:text-white after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-[#bfff00] after:transition-all after:duration-300 hover:after:w-full"
+            >About</a
+          >
+        </li>
+        <li>
+          <a
+            href="/#services"
+            class="relative text-sm font-medium text-white/60 transition-colors duration-300 hover:text-white after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-[#bfff00] after:transition-all after:duration-300 hover:after:w-full"
+            >Services</a
+          >
+        </li>
+        <li>
+          <a
+            href="/#projects"
+            class="relative text-sm font-medium text-white/60 transition-colors duration-300 hover:text-white after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-[#bfff00] after:transition-all after:duration-300 hover:after:w-full"
+            >Projects</a
+          >
+        </li>
+        <li>
+          <a
+            href="/#blog"
+            class="relative text-sm font-medium text-white/60 transition-colors duration-300 hover:text-white after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-[#bfff00] after:transition-all after:duration-300 hover:after:w-full"
+            >Blog</a
+          >
+        </li>
+      </ul>
+
+      <!-- CTA + Hamburger -->
+      <div class="flex items-center gap-4">
+        <a
+          id="nav-cta"
+          href="#contact"
+          class="rounded-full bg-[#bfff00] px-6 py-2.5 text-sm font-bold text-black
+                 transition-all duration-300 hover:bg-[#d4ff33] hover:shadow-[0_0_20px_rgba(191,255,0,0.4)] active:scale-95"
+        >
+          Get In Touch
+        </a>
+        <button
+          id="mobile-menu-btn"
+          class="flex flex-col gap-1.5 p-2 md:hidden"
+          aria-label="Toggle mobile menu"
+          aria-expanded="false"
+        >
+          <span class="h-0.5 w-5 bg-white"></span>
+          <span class="h-0.5 w-5 bg-white"></span>
+          <span class="h-0.5 w-3 bg-white"></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu Dropdown -->
+    <div
+      id="mobile-menu"
+      class="hidden overflow-hidden border-t border-white/5 py-4 md:hidden"
+    >
+      <ul class="flex flex-col gap-3" role="list">
+        <li>
+          <a
+            href="#home"
+            class="block py-1.5 text-sm font-medium text-white/60 transition-colors duration-300 hover:text-white"
+            >Home</a
+          >
+        </li>
+        <li>
+          <a
+            href="#about"
+            class="block py-1.5 text-sm font-medium text-white/60 transition-colors duration-300 hover:text-white"
+            >About</a
+          >
+        </li>
+        <li>
+          <a
+            href="#services"
+            class="block py-1.5 text-sm font-medium text-white/60 transition-colors duration-300 hover:text-white"
+            >Services</a
+          >
+        </li>
+        <li>
+          <a
+            href="#projects"
+            class="block py-1.5 text-sm font-medium text-white/60 transition-colors duration-300 hover:text-white"
+            >Projects</a
+          >
+        </li>
+        <li>
+          <a
+            href="#blog"
+            class="block py-1.5 text-sm font-medium text-white/60 transition-colors duration-300 hover:text-white"
+            >Blog</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Mobile menu toggle
+  const btn = document.getElementById("mobile-menu-btn");
+  const menu = document.getElementById("mobile-menu");
+  btn?.addEventListener("click", () => {
+    const isOpen = menu?.classList.toggle("hidden") === false;
+    btn.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  // Scroll-aware border on header
+  const header = document.getElementById("site-header");
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (window.scrollY > 20) {
+        header?.classList.add("border-white/10");
+        header?.classList.remove("border-white/5");
+      } else {
+        header?.classList.remove("border-white/10");
+        header?.classList.add("border-white/5");
+      }
+    },
+    { passive: true },
+  );
+</script>
