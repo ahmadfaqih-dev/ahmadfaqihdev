@@ -12,16 +12,16 @@ const allProjects = (await getCollection('projects')).sort(
   <section class="border-b border-zinc-900 bg-zinc-950/60 py-20 text-center">
     <div class="mx-auto max-w-3xl px-6">
       <div class="mb-4 flex items-center justify-center gap-3">
-        <span class="h-px w-8 bg-[#bfff00]/50"></span>
-        <span class="text-sm font-semibold uppercase tracking-[0.2em] text-[#bfff00]">Portfolio</span>
-        <span class="h-px w-8 bg-[#bfff00]/50"></span>
+        <span class="h-px w-8 bg-[#00aee0]"></span>
+        <span class="text-sm font-semibold uppercase tracking-[0.2em] bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Portfolio</span>
+        <span class="h-px w-8 bg-[#00aee0]"></span>
       </div>
       <h1 class="mb-4 text-5xl font-black tracking-tight text-white" style="font-family:'Space Grotesk',sans-serif;">
         Our Projects
       </h1>
       <nav aria-label="Breadcrumb" class="flex items-center justify-center gap-2 text-sm text-zinc-400">
         <a href="/" class="transition-colors duration-200 hover:text-white">Home</a>
-        <span class="font-bold text-[#bfff00]">»</span>
+        <span class="font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">»</span>
         <span class="text-white">Projects</span>
       </nav>
     </div>
@@ -34,7 +34,7 @@ const allProjects = (await getCollection('projects')).sort(
         {allProjects.map((post) => (
           <a
             href={`/projects/${post.id}`}
-            class="group relative flex h-80 flex-col justify-end overflow-hidden rounded-3xl border border-zinc-800 bg-[#111] p-6 transition-all duration-500 hover:border-[#bfff00]/50 hover:shadow-[0_0_30px_rgba(191,255,0,0.1)]"
+            class="group relative flex h-80 flex-col justify-end overflow-hidden rounded-3xl border border-zinc-800 bg-[#111] p-6 transition-all duration-500 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(191,255,0,0.1)]"
           >
             <!-- Background Image -->
             <img
@@ -53,7 +53,7 @@ const allProjects = (await getCollection('projects')).sort(
                 {post.data.number}
               </span>
               {post.data.badge && (
-                <span class="rounded-full border border-[#bfff00]/30 bg-[#bfff00]/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-[#bfff00] backdrop-blur-sm">
+                <span class="rounded-full border border-[#bfff00]/30 bg-[#bfff00]/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent backdrop-blur-sm">
                   {post.data.badge}
                 </span>
               )}
@@ -62,7 +62,7 @@ const allProjects = (await getCollection('projects')).sort(
             <!-- Content Area (Bottom) -->
             <div class="relative z-10 flex items-end justify-between gap-4">
               <div class="flex-1">
-                <h2 class="mb-2 text-2xl font-bold leading-snug text-white transition-colors duration-300 group-hover:text-[#bfff00]" style="font-family:'Space Grotesk',sans-serif;">
+                <h2 class="mb-2 text-2xl font-bold leading-snug text-white transition-colors duration-300 group-hover:text-cyan-400" style="font-family:'Space Grotesk',sans-serif;">
                   {post.data.title}
                 </h2>
                 <p class="text-sm text-zinc-300 line-clamp-2">
@@ -71,7 +71,7 @@ const allProjects = (await getCollection('projects')).sort(
               </div>
               
               <!-- Arrow Button -->
-              <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#bfff00] text-black transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">
+              <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
                 </svg>

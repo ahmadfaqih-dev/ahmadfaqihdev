@@ -18,9 +18,9 @@ const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '');
   <section class="border-b border-zinc-900 bg-zinc-950/60 py-20 text-center">
     <div class="mx-auto max-w-3xl px-6">
       <div class="mb-4 flex items-center justify-center gap-3">
-        <span class="h-px w-8 bg-[#bfff00]/50"></span>
-        <span class="text-sm font-semibold uppercase tracking-[0.2em] text-[#bfff00]">Content Hub</span>
-        <span class="h-px w-8 bg-[#bfff00]/50"></span>
+        <span class="h-px w-8 bg-[#00aee0]"></span>
+        <span class="text-sm font-semibold uppercase tracking-[0.2em] bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Content Hub</span>
+        <span class="h-px w-8 bg-[#00aee0]"></span>
       </div>
       <h1
         class="mb-4 text-5xl font-black tracking-tight text-white"
@@ -30,7 +30,7 @@ const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '');
       </h1>
       <nav aria-label="Breadcrumb" class="flex items-center justify-center gap-2 text-sm text-zinc-400">
         <a href="/" class="transition-colors duration-200 hover:text-white">Home</a>
-        <span class="font-bold text-[#bfff00]">»</span>
+        <span class="font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">»</span>
         <span class="text-white">Blogs</span>
       </nav>
     </div>
@@ -54,7 +54,7 @@ const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '');
 
           return (
           <article
-            class="group flex flex-col justify-between rounded-3xl border border-zinc-800 bg-[#111] p-6 transition-all duration-300 hover:border-[#bfff00]/20 hover:shadow-[0_0_32px_rgba(191,255,0,0.05)]"
+            class="group flex flex-col justify-between rounded-3xl border border-zinc-800 bg-[#111] p-6 transition-all duration-300 hover:border-blue-500/20 hover:shadow-[0_0_32px_rgba(191,255,0,0.05)]"
             id={`blog-${post.id}`}
           >
             <div>
@@ -67,7 +67,7 @@ const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '');
                   loading="lazy"
                 />
                 <span
-                  class="absolute left-3 top-3 rounded-full border border-[#bfff00]/30 bg-black/60 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#bfff00] backdrop-blur-sm"
+                  class="absolute left-3 top-3 rounded-full border border-[#bfff00]/30 bg-black/60 px-3 py-1 text-[10px] font-bold uppercase tracking-widest bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent backdrop-blur-sm"
                   set:html={category}
                 />
               </div>
@@ -86,7 +86,7 @@ const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '');
 
               <!-- Title -->
               <h2
-                class="mb-2 text-xl font-bold leading-snug text-white transition-colors duration-300 group-hover:text-[#bfff00]"
+                class="mb-2 text-xl font-bold leading-snug text-white transition-colors duration-300 group-hover:text-cyan-400"
                 style="font-family:'Space Grotesk',sans-serif;"
                 set:html={title}
               />
@@ -98,7 +98,7 @@ const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '');
             <!-- CTA Button -->
             <a
               href={`/blog/${post.slug}`}
-              class="inline-block self-start rounded-full bg-[#bfff00] px-5 py-2.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-[#d4ff33] hover:shadow-[0_0_16px_rgba(191,255,0,0.4)] active:scale-95"
+              class="inline-block self-start rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:from-blue-500 hover:to-cyan-400 hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] active:scale-95"
             >
               Learn more
             </a>
