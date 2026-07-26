@@ -1,0 +1,249 @@
+---
+// src/pages/about.astro
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// Placeholder data for the page. You can replace this later with actual data.
+const workExperience = [
+  {
+    role: "Senior SEO Specialist",
+    company: "Tech Digital Agency",
+    period: "2021 - Present",
+    description: "Memimpin strategi SEO teknikal dan optimasi konversi untuk klien enterprise. Berhasil meningkatkan traffic organik rata-rata sebesar 150% dalam 6 bulan.",
+  },
+  {
+    role: "Web Developer",
+    company: "Creative Studio",
+    period: "2018 - 2021",
+    description: "Mengembangkan website berperforma tinggi menggunakan React dan Astro. Bertanggung jawab penuh atas arsitektur frontend dan optimasi kecepatan (Core Web Vitals).",
+  },
+  {
+    role: "Junior Web Developer",
+    company: "Startup Lokal",
+    period: "2016 - 2018",
+    description: "Membantu tim backend dan frontend dalam mengembangkan sistem CMS internal perusahaan berbasis PHP dan JavaScript.",
+  }
+];
+
+const speakingEngagements = [
+  {
+    event: "WebDev Summit 2023",
+    topic: "Masa Depan Web: Performa & Astro",
+    date: "Oktober 2023",
+    location: "Jakarta, Indonesia"
+  },
+  {
+    event: "SEO Con Jakarta",
+    topic: "Optimasi Generative AI (GEO) untuk Bisnis",
+    date: "Mei 2023",
+    location: "Jakarta, Indonesia"
+  },
+  {
+    event: "Tech Meetup ID",
+    topic: "Core Web Vitals sebagai Metrik Utama",
+    date: "Desember 2022",
+    location: "Online (Webinar)"
+  }
+];
+
+const education = [
+  {
+    degree: "S1 Teknik Informatika",
+    institution: "Universitas Teknologi",
+    period: "2012 - 2016",
+    description: "Fokus pada rekayasa perangkat lunak dan kecerdasan buatan. Lulus dengan predikat Cum Laude."
+  }
+];
+
+const certificates = [
+  {
+    name: "Google Analytics Certification",
+    issuer: "Google",
+    year: "2023"
+  },
+  {
+    name: "Advanced Technical SEO",
+    issuer: "Semrush Academy",
+    year: "2022"
+  },
+  {
+    name: "Frontend Developer Professional",
+    issuer: "Meta",
+    year: "2022"
+  },
+  {
+    name: "Certified Web Professional",
+    issuer: "Dicoding",
+    year: "2021"
+  }
+];
+---
+
+<BaseLayout
+  title="About Ahmad Faqih | Web Developer & SEO Specialist"
+  description="Mengenal lebih dekat Ahmad Faqih: Pengalaman Kerja, Acara Speaker, Riwayat Pendidikan, dan Sertifikat profesional."
+>
+  <div class="relative overflow-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
+    
+    <!-- Hero Background Effects -->
+    <div class="pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full bg-blue-600/10 blur-[120px]"></div>
+    
+    <!-- ============================================================
+         1. HERO SECTION
+    ============================================================ -->
+    <section class="relative px-6 pb-20 pt-40 lg:pt-48" id="about-hero">
+      <div class="mx-auto max-w-7xl">
+        <div class="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
+          
+          <!-- Text Content -->
+          <div class="order-2 lg:order-1">
+            <div class="mb-5 flex items-center gap-3 reveal-on-scroll">
+              <span class="h-px w-10 bg-[#00aee0]"></span>
+              <span class="text-sm font-semibold uppercase tracking-[0.2em] bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">About Me</span>
+            </div>
+            <h1 class="reveal-on-scroll text-5xl font-black leading-tight tracking-tight text-white md:text-6xl lg:text-7xl" style="font-family:'Space Grotesk',sans-serif;">
+              Hi, I'm <br/>
+              <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Ahmad Faqih</span>
+            </h1>
+            <p class="reveal-on-scroll delay-100 mt-6 max-w-lg text-lg leading-relaxed text-zinc-400">
+              Seorang Web Developer dan SEO Specialist yang berdedikasi membangun ekosistem digital performa tinggi. Saya menggabungkan kode bersih dengan strategi pencarian mutakhir untuk memastikan bisnis Anda unggul di era AI (GEO & AEO).
+            </p>
+          </div>
+
+          <!-- Profile Image -->
+          <div class="order-1 flex justify-center lg:order-2 reveal-on-scroll delay-200">
+            <div class="relative z-10 h-[320px] w-[320px] overflow-hidden rounded-[2rem] border-2 border-blue-500/30 bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] shadow-[0_0_60px_rgba(59,130,246,0.2)] md:h-[400px] md:w-[400px]">
+              <div class="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-[#0a0a0a] opacity-60"></div>
+              <img src="/images/ahmad-faqih-blue.webp" alt="Ahmad Faqih Portrait" class="h-full w-full object-cover object-top" />
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/80 via-transparent to-transparent"></div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         2. PENGALAMAN KERJA (WORK EXPERIENCE)
+    ============================================================ -->
+    <section class="relative py-24 bg-[#0a0a0a] border-t border-white/[0.05]" id="experience">
+      <div class="mx-auto max-w-5xl px-6">
+        
+        <div class="mb-16 text-center reveal-on-scroll">
+          <h2 class="text-3xl font-black text-white md:text-4xl" style="font-family:'Space Grotesk',sans-serif;">Pengalaman <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Kerja</span></h2>
+          <p class="mt-4 text-zinc-400">Perjalanan karir profesional saya di industri digital.</p>
+        </div>
+
+        <div class="relative border-l border-blue-500/20 ml-3 md:ml-6 space-y-12">
+          {workExperience.map((item, index) => (
+            <div class={`reveal-on-scroll delay-${((index % 3) + 1) * 100} relative pl-8 md:pl-12`}>
+              <!-- Glowing Dot -->
+              <div class="absolute -left-[5px] top-1 h-2.5 w-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.8)]"></div>
+              
+              <div class="flex flex-col md:flex-row md:items-center justify-between mb-2 gap-2">
+                <h3 class="text-xl font-bold text-white">{item.role}</h3>
+                <span class="inline-block rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-semibold text-cyan-400">{item.period}</span>
+              </div>
+              <h4 class="text-base font-semibold text-zinc-500 mb-4">{item.company}</h4>
+              <p class="text-sm leading-relaxed text-zinc-400 md:text-base">
+                {item.description}
+              </p>
+            </div>
+          ))}
+        </div>
+        
+      </div>
+    </section>
+
+    <!-- ============================================================
+         3. SPEAKER / ISI ACARA
+    ============================================================ -->
+    <section class="relative py-24 bg-[#0d0d0d] border-t border-white/[0.05]" id="speaker">
+      <div class="mx-auto max-w-7xl px-6">
+        
+        <div class="mb-16 text-center reveal-on-scroll">
+          <h2 class="text-3xl font-black text-white md:text-4xl" style="font-family:'Space Grotesk',sans-serif;">Speaker & <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Acara</span></h2>
+          <p class="mt-4 text-zinc-400">Berbagi wawasan seputar teknologi web dan strategi SEO.</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {speakingEngagements.map((event, index) => (
+            <div class={`reveal-on-scroll delay-${((index % 3) + 1) * 100} group rounded-2xl border border-zinc-800 bg-[#111] p-6 transition-all duration-300 hover:border-blue-500/30 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)]`}>
+              <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-cyan-400">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+              </div>
+              <h3 class="mb-2 text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">{event.event}</h3>
+              <p class="mb-4 text-sm font-semibold text-zinc-300">{event.topic}</p>
+              <div class="flex items-center justify-between text-xs text-zinc-500">
+                <span>{event.date}</span>
+                <span>{event.location}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         4. RIWAYAT PENDIDIKAN (EDUCATION)
+    ============================================================ -->
+    <section class="relative py-24 bg-[#0a0a0a] border-t border-white/[0.05]" id="education">
+      <div class="mx-auto max-w-5xl px-6">
+        
+        <div class="mb-16 text-center reveal-on-scroll">
+          <h2 class="text-3xl font-black text-white md:text-4xl" style="font-family:'Space Grotesk',sans-serif;">Riwayat <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Pendidikan</span></h2>
+        </div>
+
+        <div class="relative border-l border-blue-500/20 ml-3 md:ml-6 space-y-12">
+          {education.map((edu, index) => (
+            <div class={`reveal-on-scroll delay-${((index % 3) + 1) * 100} relative pl-8 md:pl-12`}>
+              <!-- Glowing Dot -->
+              <div class="absolute -left-[5px] top-1 h-2.5 w-2.5 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]"></div>
+              
+              <div class="flex flex-col md:flex-row md:items-center justify-between mb-2 gap-2">
+                <h3 class="text-xl font-bold text-white">{edu.degree}</h3>
+                <span class="inline-block rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-zinc-300">{edu.period}</span>
+              </div>
+              <h4 class="text-base font-semibold text-cyan-400 mb-4">{edu.institution}</h4>
+              <p class="text-sm leading-relaxed text-zinc-400 md:text-base">
+                {edu.description}
+              </p>
+            </div>
+          ))}
+        </div>
+        
+      </div>
+    </section>
+
+    <!-- ============================================================
+         5. SERTIFIKAT (CERTIFICATES)
+    ============================================================ -->
+    <section class="relative py-24 bg-[#0d0d0d] border-t border-white/[0.05] border-b" id="certificates">
+      <div class="mx-auto max-w-7xl px-6">
+        
+        <div class="mb-16 text-center reveal-on-scroll">
+          <h2 class="text-3xl font-black text-white md:text-4xl" style="font-family:'Space Grotesk',sans-serif;">Sertifikat <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Profesional</span></h2>
+          <p class="mt-4 text-zinc-400">Validasi keahlian di bidang pengembangan web dan digital marketing.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+          {certificates.map((cert, index) => (
+            <div class={`reveal-on-scroll delay-${((index % 4) + 1) * 100} group relative flex flex-col items-center justify-center rounded-2xl border border-zinc-800 bg-[#111] p-6 text-center transition-all duration-300 hover:-translate-y-2 hover:border-blue-500/40 hover:shadow-[0_10px_40px_rgba(59,130,246,0.15)]`}>
+              <div class="mb-4 text-blue-500/50 group-hover:text-cyan-400 transition-colors duration-300">
+                <svg class="h-10 w-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+              </div>
+              <h3 class="mb-1 text-sm font-bold text-white md:text-base leading-snug">{cert.name}</h3>
+              <p class="text-xs text-zinc-500">{cert.issuer} &bull; {cert.year}</p>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>

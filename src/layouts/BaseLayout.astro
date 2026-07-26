@@ -1,8 +1,8 @@
 ---
 // BaseLayout.astro — Global wrapper layout with Header + Footer
-import '../styles/global.css';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 
 interface Props {
   title?: string;
@@ -10,8 +10,8 @@ interface Props {
 }
 
 const {
-  title = 'Ahmad Faqih | Web Developer & SEO Specialist',
-  description = 'Ahmad Faqih – Web Developer & SEO Specialist. Crafting high-performance websites, technical SEO optimization, and digital automation.',
+  title = "Ahmad Faqih | Web Developer & SEO Specialist",
+  description = "Ahmad Faqih – Web Developer & SEO Specialist. Crafting high-performance websites, technical SEO optimization, and digital automation.",
 } = Astro.props;
 ---
 
@@ -37,23 +37,90 @@ const {
       rel="stylesheet"
     />
   </head>
-  <body class="bg-[#0a0a0a] text-white antialiased" style="font-family: 'Inter', sans-serif;">
+  <body
+    class="bg-[#0a0a0a] text-white antialiased"
+    style="font-family: 'Inter', sans-serif;"
+  >
     <Header />
     <main>
       <slot /><!-- Page-specific content injected here -->
     </main>
     <Footer />
+  
   </body>
 </html>
 
 <style is:global>
-  html, body {
+/* State Awal Elemen Sebelum Di-scroll */
+.reveal-on-scroll {
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(40px);
+  transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 1.5s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, filter, transform;
+}
+
+/* State Aktif Ketika Elemen Masuk Viewport */
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  filter: blur(0px);
+  transform: translateY(0);
+}
+
+/* Efek Delay Berurutan (Staggering) untuk Card Berderet */
+.delay-100 { transition-delay: 150ms; }
+.delay-200 { transition-delay: 300ms; }
+.delay-300 { transition-delay: 450ms; }
+.delay-400 { transition-delay: 600ms; }
+.delay-500 { transition-delay: 750ms; }
+
+  html,
+  body {
     margin: 0;
     width: 100%;
     min-height: 100%;
   }
-  * { box-sizing: border-box; }
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: #0a0a0a; }
-  ::-webkit-scrollbar-thumb { background: #bfff00; border-radius: 999px; }
+  * {
+    box-sizing: border-box;
+  }
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0a0a0a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #00aee0;
+    border-radius: 999px;
+  }
 </style>
+
+<script>
+  const setupScrollObserver = () => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -50px 0px',
+      threshold: 0.15,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal-on-scroll').forEach((el) => {
+      observer.observe(el);
+    });
+  };
+
+  
+  document.addEventListener('astro:page-load', setupScrollObserver);
+  // Run immediately for Astro's deferred module scripts
+  setupScrollObserver();
+</script>
