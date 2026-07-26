@@ -2,8 +2,26 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 // Lakukan pengambilan data artikel secara langsung menggunakan fetch API
-const res = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/posts?_embed");
-const wpPosts = await res.json();
+let wpPosts: any[] = [];
+try {
+  const res = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/posts?_embed", {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': 'application/json',
+    }
+  });
+  
+  if (res.ok) {
+    const data = await res.json();
+    if (Array.isArray(data)) {
+      wpPosts = data;
+    }
+  } else {
+    console.error(`Failed to fetch blog index. Status: ${res.status}`);
+  }
+} catch (error) {
+  console.error("Error fetching blog posts:", error);
+}
 
 // Helper: remove HTML tags for word count
 const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '');

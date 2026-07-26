@@ -8,9 +8,25 @@ const latestProjects = (await getCollection('projects'))
   .slice(0, 5);
 
 // Latest 3 posts for homepage Blog Section
-const blogRes = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/posts?_embed");
-const wpPosts = await blogRes.json();
-const latestPosts = wpPosts.slice(0, 3);
+let latestPosts: any[] = [];
+try {
+  const blogRes = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/posts?_embed", {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': 'application/json',
+    }
+  });
+  if (blogRes.ok) {
+    const wpPosts = await blogRes.json();
+    if (Array.isArray(wpPosts)) {
+      latestPosts = wpPosts.slice(0, 3);
+    }
+  } else {
+    console.error(`Failed to fetch homepage blog posts. Status: ${blogRes.status}`);
+  }
+} catch (error) {
+  console.error("Error fetching homepage blog posts:", error);
+}
 
 // Helper: remove HTML tags for word count
 const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '');
