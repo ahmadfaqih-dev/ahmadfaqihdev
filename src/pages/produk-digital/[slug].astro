@@ -1,0 +1,442 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const WP_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Accept': 'application/json',
+};
+
+export async function getStaticPaths() {
+  const headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'application/json',
+  };
+
+  let products: any[] = [];
+  try {
+    const res = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/produk-digital?_embed&per_page=100", {
+      headers,
+    });
+    if (!res.ok) {
+      console.error(`Failed to fetch produk-digital for static paths. Status: ${res.status}`);
+      return [];
+    }
+    const data = await res.json();
+    if (Array.isArray(data)) {
+      products = data;
+    }
+  } catch (error) {
+    console.error("Error fetching produk-digital for static paths:", error);
+    return [];
+  }
+
+  return products.map((product) => ({
+    params: { slug: product.slug },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+
+// Helper
+const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '');
+
+// Featured image
+const featuredImage = product._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/images/default-product.jpg';
+
+// Taxonomy terms
+const productTerms = product._embedded?.['wp:term']?.flat?.() || [];
+const typeLabel = productTerms.find((t: any) => t.taxonomy === 'type-product')?.name || '';
+
+// Author
+const author = product._embedded?.author?.[0]?.name || 'Ahmad Faqih';
+
+// ACF fields
+const previewUrl = product.acf?.preview || '';
+const buyNowUrl = product.acf?.buy_now || '';
+
+// Reading time estimate
+const wordCount = product.content?.rendered ? stripHtml(product.content.rendered).split(/\s+/).length : 0;
+const readingTime = Math.ceil(wordCount / 200) || 1;
+
+// Format date
+const formatDate = (dateStr: string) => {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+};
+
+const pageTitle = stripHtml(product.title?.rendered || '');
+---
+
+<BaseLayout title={`${pageTitle} | Produk Digital`} description={stripHtml(product.excerpt?.rendered || '')}>
+
+  <!-- ── Hero Section ── -->
+  <section class="relative border-b border-zinc-900 overflow-hidden">
+    <!-- Background glow -->
+    <div class="pointer-events-none absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-blue-500/5 blur-[150px]"></div>
+    <div class="pointer-events-none absolute -right-40 bottom-0 h-[400px] w-[400px] rounded-full bg-lime-400/5 blur-[120px]"></div>
+
+    <div class="relative mx-auto max-w-7xl px-6 py-16 lg:py-24">
+      <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+
+        <!-- Left: Product Image -->
+        <div class="relative">
+          <div class="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/50 shadow-2xl">
+            <img
+              src={featuredImage}
+              alt={pageTitle}
+              class="w-full object-cover"
+              style="aspect-ratio:16/10;"
+            />
+          </div>
+          <!-- Floating type badge -->
+          {typeLabel && (
+            <div class="absolute -right-3 -top-3 z-10 rounded-2xl border border-zinc-700 bg-[#111]/95 px-4 py-2.5 backdrop-blur-sm shadow-xl">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Tipe</p>
+              <p class="text-sm font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">{typeLabel}</p>
+            </div>
+          )}
+        </div>
+
+        <!-- Right: Product Info -->
+        <div class="flex flex-col">
+          <!-- Breadcrumb -->
+          <nav aria-label="Breadcrumb" class="mb-6 flex items-center gap-2 text-xs text-white/50">
+            <a href="/" class="transition-colors duration-200 hover:text-white">Home</a>
+            <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">/</span>
+            <a href="/produk-digital" class="transition-colors duration-200 hover:text-white">Produk Digital</a>
+            <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">/</span>
+            <span class="text-white/70 truncate max-w-[200px]">{pageTitle}</span>
+          </nav>
+
+          <!-- Type tag -->
+          {typeLabel && (
+            <span class="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full border border-[#bfff00]/30 bg-[#bfff00]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+              <span class="h-1 w-1 rounded-full bg-cyan-400"></span>
+              {typeLabel}
+            </span>
+          )}
+
+          <!-- Title -->
+          <h1
+            class="mb-4 text-3xl font-black leading-tight text-white md:text-4xl xl:text-5xl"
+            style="font-family:'Space Grotesk',sans-serif;"
+            set:html={product.title.rendered}
+          />
+
+          <!-- Excerpt / Short description -->
+          <div
+            class="mb-8 text-base leading-relaxed text-white/50"
+            set:html={product.excerpt?.rendered || ''}
+          />
+
+          <!-- Meta info row -->
+          <div class="mb-8 flex flex-wrap items-center gap-4 text-sm text-zinc-500">
+            <span class="flex items-center gap-1.5">
+              <svg class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+              {author}
+            </span>
+            <span class="text-zinc-700">·</span>
+            <span class="flex items-center gap-1.5">
+              <svg class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              {formatDate(product.date)}
+            </span>
+            <span class="text-zinc-700">·</span>
+            <span class="flex items-center gap-1.5">
+              <svg class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              {readingTime} menit baca
+            </span>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="flex flex-wrap items-center gap-4">
+            {buyNowUrl && (
+              <a
+                href={buyNowUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group inline-flex items-center gap-2.5 rounded-full bg-lime-400 px-8 py-4 text-sm font-bold text-black transition-all duration-300 hover:bg-lime-300 hover:shadow-[0_0_30px_rgba(163,230,53,0.4)] active:scale-95"
+              >
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+                </svg>
+                Beli Sekarang
+                <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H7M17 7v10"/>
+                </svg>
+              </a>
+            )}
+            {previewUrl && (
+              <a
+                href={previewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group inline-flex items-center gap-2 rounded-full border border-zinc-600 px-6 py-4 text-sm font-semibold text-white/70 transition-all duration-300 hover:border-cyan-400/50 hover:text-cyan-400 hover:shadow-[0_0_12px_rgba(59,130,246,0.15)]"
+              >
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                Preview / Live Demo
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Product Content Body ── -->
+  <article class="mx-auto max-w-[55rem] px-6 py-16">
+
+    <!-- Section label -->
+    <div class="mb-8 flex items-center gap-3">
+      <span class="h-px w-8 bg-[#00aee0]"></span>
+      <span class="text-sm font-semibold uppercase tracking-[0.2em] bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Deskripsi Produk</span>
+      <span class="h-px flex-1 bg-zinc-800"></span>
+    </div>
+
+    <!-- WordPress Content Body -->
+    <div
+      class="prose-blog"
+      style="color: rgb(212 212 216); font-size: 1rem; line-height: 1.8;"
+      set:html={product.content?.rendered || ''}
+    />
+
+    <!-- ── Sticky CTA Box ── -->
+    <div
+      class="my-16 overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-[#111] to-zinc-900/80 p-8 md:p-10"
+      id="product-cta-box"
+    >
+      <div class="flex flex-col items-center gap-8 md:flex-row md:justify-between">
+        <!-- Left: Info -->
+        <div class="flex-1">
+          <div class="mb-3 flex items-center gap-2">
+            {typeLabel && (
+              <span class="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-cyan-400">
+                {typeLabel}
+              </span>
+            )}
+          </div>
+          <p class="text-2xl font-black text-white md:text-3xl" style="font-family:'Space Grotesk',sans-serif;">
+            Siap menggunakan produk ini?
+          </p>
+          <p class="mt-2 text-sm leading-relaxed text-zinc-400">
+            Dapatkan akses sekarang dan mulai tingkatkan produktivitas bisnis digital Anda hari ini.
+          </p>
+        </div>
+
+        <!-- Right: Buttons -->
+        <div class="flex flex-shrink-0 flex-col gap-3 sm:flex-row">
+          {buyNowUrl && (
+            <a
+              href={buyNowUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-lime-400 px-7 py-4 text-sm font-bold text-black transition-all duration-300 hover:bg-lime-300 hover:shadow-[0_0_25px_rgba(163,230,53,0.4)] active:scale-95"
+            >
+              Checkout Sekarang
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H7M17 7v10"/>
+              </svg>
+            </a>
+          )}
+          {previewUrl && (
+            <a
+              href={previewUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-600 px-7 py-4 text-sm font-semibold text-white/70 transition-all duration-300 hover:border-cyan-400/50 hover:text-cyan-400"
+            >
+              Preview
+            </a>
+          )}
+          {!buyNowUrl && !previewUrl && (
+            <a
+              href="#contact"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-7 py-4 text-sm font-bold text-white transition-all duration-300 hover:from-blue-500 hover:to-cyan-400 hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] active:scale-95"
+            >
+              Hubungi Saya
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Share Bar ── -->
+    <div class="my-8 flex items-center gap-4 border-b border-t border-zinc-900 py-6" id="share-bar">
+      <span class="text-xs font-bold uppercase tracking-widest text-zinc-500">Share</span>
+      <div class="flex items-center gap-2">
+        <a id="share-linkedin" href="#" target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn"
+          class="rounded-xl border border-zinc-800 bg-zinc-900/50 p-3 text-zinc-400 transition-all duration-200 hover:border-blue-500/40 hover:text-cyan-400">
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a id="share-facebook" href="#" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook"
+          class="rounded-xl border border-zinc-800 bg-zinc-900/50 p-3 text-zinc-400 transition-all duration-200 hover:border-blue-500/40 hover:text-cyan-400">
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <a id="share-twitter" href="#" target="_blank" rel="noopener noreferrer" aria-label="Share on X"
+          class="rounded-xl border border-zinc-800 bg-zinc-900/50 p-3 text-zinc-400 transition-all duration-200 hover:border-blue-500/40 hover:text-cyan-400">
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a id="share-whatsapp" href="#" target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp"
+          class="rounded-xl border border-zinc-800 bg-zinc-900/50 p-3 text-zinc-400 transition-all duration-200 hover:border-blue-500/40 hover:text-cyan-400">
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+        <a id="share-telegram" href="#" target="_blank" rel="noopener noreferrer" aria-label="Share on Telegram"
+          class="rounded-xl border border-zinc-800 bg-zinc-900/50 p-3 text-zinc-400 transition-all duration-200 hover:border-blue-500/40 hover:text-cyan-400">
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Author Box ── -->
+    <div class="mt-6 flex flex-col items-start gap-6 rounded-2xl border border-zinc-900/60 bg-zinc-900/20 p-6 sm:flex-row" id="author-box">
+      <div class="flex-shrink-0">
+        <div class="h-16 w-16 overflow-hidden rounded-full border border-zinc-700 bg-zinc-800">
+          <img
+            src="/images/ahmad-faqih-blue.webp"
+            alt="Ahmad Faqih"
+            class="h-full w-full object-cover"
+            onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-family:Space Grotesk,sans-serif;font-size:1.25rem;font-weight:700;color:#bfff00;display:flex;align-items:center;justify-content:center;height:100%;\'>AF</span>';"
+          />
+        </div>
+      </div>
+      <div>
+        <h3 class="mb-1.5 text-xl font-bold text-white" style="font-family:'Space Grotesk',sans-serif;">{author}</h3>
+        <p class="text-sm leading-relaxed text-zinc-400">
+          Founder of Ngrekso Digital Agency. Solopreneur yang mendedikasikan keahlian arsitektur kode web kustom berbasis Astro/WordPress dan optimasi SEO teknis tingkat tinggi demi mendorong konversi organik bisnis.
+        </p>
+      </div>
+    </div>
+
+  </article>
+
+</BaseLayout>
+
+<!-- ── Share link injection (client-side) ── -->
+<script>
+  const url   = encodeURIComponent(window.location.href);
+  const title = encodeURIComponent(document.title);
+
+  const links: Record<string, string> = {
+    'share-linkedin':  `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+    'share-facebook':  `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+    'share-twitter':   `https://twitter.com/intent/tweet?url=${url}&text=${title}`,
+    'share-whatsapp':  `https://wa.me/?text=${title}%20${url}`,
+    'share-telegram':  `https://t.me/share/url?url=${url}&text=${title}`,
+  };
+
+  Object.entries(links).forEach(([id, href]) => {
+    const el = document.getElementById(id) as HTMLAnchorElement | null;
+    if (el) el.href = href;
+  });
+</script>
+
+<!-- ── Prose styling for WordPress content ── -->
+<style>
+  .prose-blog :global(h1),
+  .prose-blog :global(h2),
+  .prose-blog :global(h3),
+  .prose-blog :global(h4) {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    color: #ffffff;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+  .prose-blog :global(h2) { font-size: 1.8rem; }
+  .prose-blog :global(h3) { font-size: 1.5rem; color: #ebebeb; }
+
+  .prose-blog :global(p) {
+    margin-bottom: 1.25rem;
+    color: #eaeaea;
+  }
+
+  .prose-blog :global(strong) {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .prose-blog :global(a) {
+    color: #22d3ee;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: rgba(34,211,238,0.4);
+    transition: color 0.2s, text-decoration-color 0.2s;
+  }
+  .prose-blog :global(a:hover) {
+    color: #67e8f9;
+    text-decoration-color: #22d3ee;
+  }
+
+  .prose-blog :global(ul),
+  .prose-blog :global(ol) {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+    color: #eaeaea;
+  }
+  .prose-blog :global(li) { margin-bottom: 0.5rem; }
+
+  .prose-blog :global(blockquote) {
+    border-left: 3px solid #22d3ee;
+    padding-left: 1rem;
+    color: rgb(161 161 170);
+    font-style: italic;
+    margin: 1.5rem 0;
+  }
+
+  .prose-blog :global(code) {
+    background: rgb(39 39 42);
+    color: #22d3ee;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+  }
+
+  .prose-blog :global(pre) {
+    background: rgb(24 24 27);
+    border: 1px solid rgb(63 63 70);
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+  }
+  .prose-blog :global(pre code) {
+    background: transparent;
+    color: rgb(212 212 216);
+    padding: 0;
+  }
+
+  .prose-blog :global(hr) {
+    border-color: rgb(63 63 70);
+    margin: 2rem 0;
+  }
+
+  .prose-blog :global(img) {
+    border-radius: 1rem;
+    width: 100%;
+    margin: 1.5rem 0;
+  }
+
+  .prose-blog :global(figure) {
+    margin: 1.5rem 0;
+  }
+
+  .prose-blog :global(figcaption) {
+    text-align: center;
+    font-size: 0.875rem;
+    color: rgb(113 113 122);
+    margin-top: 0.5rem;
+  }
+</style>

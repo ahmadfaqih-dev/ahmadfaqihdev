@@ -1,10 +1,27 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
 
-const allProjects = (await getCollection('projects')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const WP_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Accept': 'application/json',
+};
+
+let allProjects: any[] = [];
+try {
+  const res = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/projects?_embed&per_page=100", {
+    headers: WP_HEADERS,
+  });
+  if (!res.ok) {
+    console.error(`Failed to fetch projects. Status: ${res.status}`);
+  } else {
+    const data = await res.json();
+    if (Array.isArray(data)) {
+      allProjects = data;
+    }
+  }
+} catch (error) {
+  console.error("Error fetching projects:", error);
+}
 ---
 
 <BaseLayout title="Projects & Case Studies | Ahmad Faqih">
@@ -31,54 +48,54 @@ const allProjects = (await getCollection('projects')).sort(
   <section class="py-16">
     <div class="mx-auto max-w-7xl px-4">
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {allProjects.map((post) => (
-          <a
-            href={`/projects/${post.id}`}
-            class="group relative flex h-80 flex-col justify-end overflow-hidden rounded-3xl border border-zinc-800 bg-[#111] p-6 transition-all duration-500 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(191,255,0,0.1)]"
-          >
-            <!-- Background Image -->
-            <img
-              src={post.data.image}
-              alt={post.data.title}
-              class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-              loading="lazy"
-            />
-            
-            <!-- Dark Overlay -->
-            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-500 group-hover:opacity-90"></div>
+        {allProjects.map((project: any) => {
+          if (!project?.title?.rendered) return null;
+          const image = project._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/images/default-project.jpg';
+          const typeTerms = project._embedded?.['wp:term']?.flat?.() || [];
+          const typeLabel = typeTerms.find((t: any) => t.taxonomy === 'type-projects')?.name || '';
 
-            <!-- Number/Badge top section -->
-            <div class="absolute left-6 top-6 flex items-center gap-2">
-              <span class="font-bold text-white/50" style="font-family:'Space Grotesk',sans-serif; font-size:1.5rem; line-height:1;">
-                {post.data.number}
-              </span>
-              {post.data.badge && (
-                <span class="rounded-full border border-[#bfff00]/30 bg-[#bfff00]/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent backdrop-blur-sm">
-                  {post.data.badge}
-                </span>
-              )}
-            </div>
-
-            <!-- Content Area (Bottom) -->
-            <div class="relative z-10 flex items-end justify-between gap-4">
-              <div class="flex-1">
-                <h2 class="mb-2 text-2xl font-bold leading-snug text-white transition-colors duration-300 group-hover:text-cyan-400" style="font-family:'Space Grotesk',sans-serif;">
-                  {post.data.title}
-                </h2>
-                <p class="text-sm text-zinc-300 line-clamp-2">
-                  {post.data.description}
-                </p>
-              </div>
+          return (
+            <a
+              href={`/projects/${project.slug}`}
+              class="group relative flex h-80 flex-col justify-end overflow-hidden rounded-3xl border border-zinc-800 bg-[#111] p-6 transition-all duration-500 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(191,255,0,0.1)]"
+            >
+              {/* Background Image */}
+              <img
+                src={image}
+                alt={project.title.rendered}
+                class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                loading="lazy"
+              />
               
-              <!-- Arrow Button -->
-              <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                </svg>
+              {/* Dark Overlay */}
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent transition-opacity duration-500 group-hover:opacity-90"></div>
+
+              {/* Type Badge top section */}
+              <div class="absolute left-6 top-6 flex items-center gap-2">
+                {typeLabel && (
+                  <span class="rounded-full border border-[#bfff00]/30 bg-[#bfff00]/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent backdrop-blur-sm">
+                    {typeLabel}
+                  </span>
+                )}
               </div>
-            </div>
-          </a>
-        ))}
+
+              {/* Content Area (Bottom) */}
+              <div class="relative z-10 flex items-end justify-between gap-4">
+                <div class="flex-1">
+                  <h2 class="mb-2 text-2xl font-bold leading-snug text-white transition-colors duration-300 group-hover:text-cyan-400" style="font-family:'Space Grotesk',sans-serif;" set:html={project.title.rendered} />
+                  <div class="text-sm text-zinc-300 line-clamp-2" set:html={project.excerpt?.rendered || ''} />
+                </div>
+                
+                {/* Arrow Button */}
+                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">
+                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                  </svg>
+                </div>
+              </div>
+            </a>
+          );
+        })}
       </div>
     </div>
   </section>
