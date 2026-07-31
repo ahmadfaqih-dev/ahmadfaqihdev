@@ -4,6 +4,8 @@ import remarkExternalLinks from 'remark-external-links';
 
 import tailwindcss from '@tailwindcss/vite';
 
+import cloudflare from '@astrojs/cloudflare';
+
 // https://astro.build/config
 export default defineConfig({
   markdown: {
@@ -12,7 +14,10 @@ export default defineConfig({
       [remarkExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }]
     ]
   },
+
   vite: {
     plugins: [tailwindcss()]
-  }
+  },
+
+  adapter: cloudflare()
 });
