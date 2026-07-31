@@ -4,7 +4,7 @@
  */
 
 // Simple concurrency queue implementation
-const concurrencyLimit = 2; // Reduced to 2 to prevent rate limiting
+const concurrencyLimit = 3;
 let activeRequests = 0;
 const requestQueue: Array<() => void> = [];
 
@@ -12,10 +12,9 @@ function acquireLock(): Promise<void> {
   return new Promise((resolve) => {
     if (activeRequests < concurrencyLimit) {
       activeRequests++;
-      // Add a small delay to avoid bursting WAF
-      setTimeout(resolve, 300);
+      resolve();
     } else {
-      requestQueue.push(() => setTimeout(resolve, 300));
+      requestQueue.push(resolve);
     }
   });
 }
@@ -44,8 +43,8 @@ export async function fetchWithRetry(
   url: string,
   options: RequestInit = {},
   retries: number = 3,
-  backoff: number = 2000,
-  timeout: number = 30000 // Increased timeout to 30s for production stability
+  backoff: number = 1000,
+  timeout: number = 15000
 ): Promise<Response> {
   await acquireLock();
 
@@ -67,9 +66,13 @@ export async function fetchWithRetry(
           return response;
         }
 
-        // WAFs like Cloudflare/Wordfence might return 403/503 during rapid requests.
-        // Throwing an error here ensures we retry with exponential backoff.
-        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+        // Only retry on 5xx server errors or rate limits (429), break on 4xx otherwise
+        if (response.status < 500 && response.status !== 429) {
+          console.error(`Fetch API returned ${response.status} for ${url}, aborting retry.`);
+          return response; 
+        }
+
+        console.warn(`Attempt ${attempt + 1}/${retries + 1} failed for ${url} with status ${response.status}.`);
       } catch (error: any) {
         clearTimeout(timeoutId);
         
@@ -78,7 +81,7 @@ export async function fetchWithRetry(
           throw error;
         }
 
-        console.warn(`Attempt ${attempt + 1}/${retries + 1} failed for ${url} with error: ${error.message || error}`);
+        console.warn(`Attempt ${attempt + 1}/${retries + 1} failed with error: ${error.message || error}`);
       }
 
       // Wait before next retry (exponential backoff)
@@ -94,7 +97,7 @@ export async function fetchWithRetry(
 }
 
 export const WP_HEADERS = {
-  // Use a standard browser User-Agent to prevent WAFs from blocking the build request
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-  'Accept': 'application/json',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+  'Accept': 'application/json, text/plain, */*',
+  'Cache-Control': 'no-cache',
 };
