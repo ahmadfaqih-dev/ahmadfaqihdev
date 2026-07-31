@@ -14,11 +14,11 @@ export async function getStaticPaths() {
 
   let products: any[] = [];
   try {
-    const res = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/produk-digital?_embed&per_page=100", {
+    const res = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/product?_embed&per_page=100", {
       headers,
     });
     if (!res.ok) {
-      console.error(`Failed to fetch produk-digital for static paths. Status: ${res.status}`);
+      console.error(`Failed to fetch product for static paths. Status: ${res.status}`);
       return [];
     }
     const data = await res.json();
@@ -26,7 +26,7 @@ export async function getStaticPaths() {
       products = data;
     }
   } catch (error) {
-    console.error("Error fetching produk-digital for static paths:", error);
+    console.error("Error fetching product for static paths:", error);
     return [];
   }
 
@@ -104,7 +104,7 @@ const pageTitle = stripHtml(product.title?.rendered || '');
           <nav aria-label="Breadcrumb" class="mb-6 flex items-center gap-2 text-xs text-white/50">
             <a href="/" class="transition-colors duration-200 hover:text-white">Home</a>
             <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">/</span>
-            <a href="/produk-digital" class="transition-colors duration-200 hover:text-white">Produk Digital</a>
+            <a href="/product" class="transition-colors duration-200 hover:text-white">Produk Digital</a>
             <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">/</span>
             <span class="text-white/70 truncate max-w-[200px]">{pageTitle}</span>
           </nav>
@@ -369,15 +369,18 @@ const pageTitle = stripHtml(product.title?.rendered || '');
   }
 
   .prose-blog :global(a) {
-    color: #22d3ee;
+    color: #3b82f6;
     text-decoration: underline;
     text-underline-offset: 4px;
-    text-decoration-color: rgba(34,211,238,0.4);
-    transition: color 0.2s, text-decoration-color 0.2s;
+    text-decoration-color: rgba(59,130,246,0.4);
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
   }
   .prose-blog :global(a:hover) {
-    color: #67e8f9;
-    text-decoration-color: #22d3ee;
+    color: #ffffff;
+    background-color: #3b82f6;
+    text-decoration-color: transparent;
   }
 
   .prose-blog :global(ul),

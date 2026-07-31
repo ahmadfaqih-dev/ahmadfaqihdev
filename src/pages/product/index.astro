@@ -8,11 +8,11 @@ const WP_HEADERS = {
 
 let allProducts: any[] = [];
 try {
-  const res = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/produk-digital?_embed&per_page=100", {
+  const res = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/product?_embed&per_page=100", {
     headers: WP_HEADERS,
   });
   if (!res.ok) {
-    console.error(`Failed to fetch produk-digital. Status: ${res.status}`);
+    console.error(`Failed to fetch product. Status: ${res.status}`);
   } else {
     const data = await res.json();
     if (Array.isArray(data)) {
@@ -20,7 +20,7 @@ try {
     }
   }
 } catch (error) {
-  console.error("Error fetching produk-digital:", error);
+  console.error("Error fetching product:", error);
 }
 ---
 
@@ -103,7 +103,7 @@ try {
 
                 {/* Quick-view arrow */}
                 <a
-                  href={`/produk-digital/${product.slug}`}
+                  href={`/product/${product.slug}`}
                   class="absolute bottom-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-white/20"
                   aria-label={`Lihat detail ${product.title.rendered}`}
                 >
@@ -116,7 +116,7 @@ try {
               {/* Content */}
               <div class="flex flex-1 flex-col p-6">
                 {/* Title */}
-                <a href={`/produk-digital/${product.slug}`} class="block">
+                <a href={`/product/${product.slug}`} class="block">
                   <h2
                     class="mb-2 text-xl font-bold leading-snug text-white transition-colors duration-300 group-hover:text-cyan-400"
                     style="font-family:'Space Grotesk',sans-serif;"
@@ -165,7 +165,7 @@ try {
                   )}
                   {!previewUrl && !buyNowUrl && (
                     <a
-                      href={`/produk-digital/${product.slug}`}
+                      href={`/product/${product.slug}`}
                       class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-2.5 text-sm font-bold text-white transition-all duration-300 hover:from-blue-500 hover:to-cyan-400 hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] active:scale-95"
                     >
                       Lihat Detail
