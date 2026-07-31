@@ -1,29 +1,16 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-
-const WP_HEADERS = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-  'Accept': 'application/json',
-};
+import { fetchWithRetry, WP_HEADERS } from '../../utils/fetchApi';
 
 export async function getStaticPaths() {
-  const headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Accept': 'application/json',
-  };
-
   let projects: any[] = [];
   try {
-    const res = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/projects?_embed&per_page=100", {
-      headers,
+    const res = await fetchWithRetry("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/projects?_embed&per_page=100", {
+      headers: WP_HEADERS,
     });
-    if (!res.ok) {
-      console.error(`Failed to fetch projects for static paths. Status: ${res.status}`);
-    } else {
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        projects = data;
-      }
+    const data = await res.json();
+    if (Array.isArray(data)) {
+      projects = data;
     }
   } catch (error) {
     console.error("Error fetching projects for static paths:", error);

@@ -12,7 +12,13 @@ export default defineConfig({
       [remarkExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }]
     ]
   },
+  build: {
+    concurrency: 2
+  },
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    build: {
+      cssCodeSplit: true
+    }
   }
 });

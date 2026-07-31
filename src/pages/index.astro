@@ -1,24 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-
-const WP_HEADERS = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-  'Accept': 'application/json',
-};
+import { fetchWithRetry, WP_HEADERS } from '../utils/fetchApi';
 
 // Latest projects from WordPress CPT
 let latestProjects: any[] = [];
 try {
-  const projectsRes = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/projects?_embed&per_page=5", {
+  const projectsRes = await fetchWithRetry("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/projects?_embed&per_page=5", {
     headers: WP_HEADERS,
   });
-  if (!projectsRes.ok) {
-    console.error(`Failed to fetch projects. Status: ${projectsRes.status}`);
-  } else {
-    const wpProjects = await projectsRes.json();
-    if (Array.isArray(wpProjects)) {
-      latestProjects = wpProjects;
-    }
+  const wpProjects = await projectsRes.json();
+  if (Array.isArray(wpProjects)) {
+    latestProjects = wpProjects;
   }
 } catch (error) {
   console.error("Error fetching projects:", error);
@@ -27,16 +19,12 @@ try {
 // Produk Digital from WordPress CPT
 let digitalProducts: any[] = [];
 try {
-  const productsRes = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/product?_embed", {
+  const productsRes = await fetchWithRetry("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/product?_embed", {
     headers: WP_HEADERS,
   });
-  if (!productsRes.ok) {
-    console.error(`Failed to fetch product. Status: ${productsRes.status}`);
-  } else {
-    const wpProducts = await productsRes.json();
-    if (Array.isArray(wpProducts)) {
-      digitalProducts = wpProducts;
-    }
+  const wpProducts = await productsRes.json();
+  if (Array.isArray(wpProducts)) {
+    digitalProducts = wpProducts;
   }
 } catch (error) {
   console.error("Error fetching product:", error);
@@ -45,16 +33,12 @@ try {
 // Latest 3 posts for homepage Blog Section
 let latestPosts: any[] = [];
 try {
-  const blogRes = await fetch("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/posts?_embed", {
+  const blogRes = await fetchWithRetry("https://cms.ngreksodigital.com/ahmadfaqihdev/wp-json/wp/v2/posts?_embed", {
     headers: WP_HEADERS,
   });
-  if (!blogRes.ok) {
-    console.error(`Failed to fetch homepage blog posts. Status: ${blogRes.status}`);
-  } else {
-    const wpPosts = await blogRes.json();
-    if (Array.isArray(wpPosts)) {
-      latestPosts = wpPosts.slice(0, 3);
-    }
+  const wpPosts = await blogRes.json();
+  if (Array.isArray(wpPosts)) {
+    latestPosts = wpPosts.slice(0, 3);
   }
 } catch (error) {
   console.error("Error fetching homepage blog posts:", error);
